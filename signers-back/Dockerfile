@@ -1,5 +1,5 @@
 # Use node image for building and nestjs image for final stage
-FROM node:18-alpine AS builder
+FROM node:21-alpine AS builder
 
 # Set working directory
 WORKDIR /app
