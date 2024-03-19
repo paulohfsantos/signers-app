@@ -1,0 +1,14 @@
+version: "3.9"
+
+services:
+  signers-back:
+    build: ./signers-back  # Path to the back-end service directory
+    ports:
+      - "8080:8080"  # Map back-end port (example)
+
+  signers-front:
+    build: ./signers-front  # Path to the front-end service directory
+    ports:
+      - "3000:3000"  # Map front-end port (example)
+    depends_on:
+      - signers-back  # Front-end depends on back-end being up first
