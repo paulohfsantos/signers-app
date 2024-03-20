@@ -1,29 +1,30 @@
 # Use node image for building
 FROM node:21-alpine As builder
 
+# Install pnpm globally
+RUN npm install -g pnpm
+
 # Set working directory
 WORKDIR /app
 
-# Copy package.json
+# Copy package.json and pnpm-lock.yaml
 COPY package*.json ./
-
-# Copy pnpm-lock.yaml
 COPY pnpm-lock.yaml ./
 
-# Install pnpm
-RUN npm install -g pnpm
-
-# Install dependencies
+# Install dependencies using pnpm
 RUN pnpm install
 
 # Copy the rest of the application code
 COPY . .
 
 # Build the front-end app
-RUN pnpm build
+RUN pnpm run build
 
 # Use a smaller image to serve the static files
-FROM nginx:alpine
+FROM nginx:latest
+
+# Remove the default nginx static files
+RUN rm -rf /usr/share/nginx/html/*
 
 # Copy the production build of your front-end app
 COPY --from=builder /app/dist /usr/share/nginx/html
@@ -32,4 +33,4 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 EXPOSE ${PORT:-80}
 
 # Start the application
-# CMD ["nginx", "-g", "daemon off;"]
+CMD ["nginx", "-g", "daemon off;"]

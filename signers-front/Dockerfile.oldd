@@ -1,0 +1,48 @@
+# Use node image for building
+FROM node:21-alpine As development
+
+# Create app directory
+WORKDIR /app
+
+# Copy package.json
+COPY package.json ./
+COPY pnpm-lock.yaml ./
+
+# Install pnpm
+RUN npm install -g pnpm
+# Install dependencies
+RUN pnpm install --frozen-lockfile --only=development
+
+COPY . .
+
+# Build the front-end app
+RUN pnpm build
+
+# Use a smaller image to serve the static files
+FROM nginx:alpine AS production
+
+ARG NODE_ENV=production
+ENV NODE_ENV=${NODE_ENV}
+
+# Create app directory
+WORKDIR /app
+
+# Copy package.json
+COPY package.json ./
+COPY pnpm-lock.yaml ./
+
+# Install pnpm
+RUN npm install -g pnpm
+# Install dependencies
+RUN pnpm install --frozen-lockfile --only=production
+
+COPY . .
+
+# Copy the production build of your front-end app
+COPY --from=development /app/dist /usr/share/nginx/html
+
+# Expose the port used by your front-end application
+EXPOSE ${PORT:-3000}
+
+# execute development mode
+CMD ["pnpm", "start:dev"]

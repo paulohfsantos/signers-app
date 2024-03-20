@@ -7,10 +7,20 @@ services:
       - "${PORT:-3000}:3000"
     environment:
       - PORT=${PORT:-3000}
+    volumes:
+      - ./signers-back:/app
 
   signers-front:
     build: ./signers-front
     ports:
       - "${PORT:-80}:80"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
     depends_on:
       - signers-back
+    volumes:
+      - ./signers-front:/app
+
+volumes:
+  signers-front:
+  signers-back:
