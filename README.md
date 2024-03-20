@@ -31,9 +31,13 @@ cd signers-app
 
 # Install the dependencies and start the app in development mode
 
-docker-compose up # -d (to run in detached mode)
+# build for development
+docker-compose -f docker-compose.dev.yaml up --build
+
+# build for production
+docker-compose up --build
 ```
 
 ## Usage
 
-Open your browser and go to `http://localhost` to view the app.
+Open your browser and go to `http://localhost:5173` to view the app in development mode.
