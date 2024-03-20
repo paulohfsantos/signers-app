@@ -3,6 +3,7 @@ FROM node:21-alpine As builder
 
 # Install pnpm globally
 RUN npm install -g pnpm
+RUN npm install -g http-server
 
 # Set working directory
 WORKDIR /app
@@ -20,9 +21,8 @@ COPY . .
 # Build the front-end app
 RUN pnpm run build
 
-# Use a smaller image to serve the static files
-# production stage
-FROM nginx:stable-alpine as production-stage
-COPY --from=builder /app/dist /usr/share/nginx/html
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+# Expose port
+EXPOSE 8080
+
+# Start the server
+CMD [ "http-server", "dist" ]
