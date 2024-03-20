@@ -2,15 +2,15 @@ version: "3.9"
 
 services:
   signers-back:
-    build: ./signers-back  # Path to the back-end service directory
+    build: ./signers-back
     ports:
-      - "${PORT:-3000}:3000"  # Map back-end port (example)
+      - "${PORT:-3000}:3000"
     environment:
       - PORT=${PORT:-3000}
 
   signers-front:
-    build: ./signers-front  # Path to the front-end service directory
+    build: ./signers-front
     ports:
-      - "${PORT:-80}:80"  # Map front-end port (example)
+      - "${PORT:-80}:80"
     depends_on:
-      - signers-back  # Front-end depends on back-end being up first
+      - signers-back
