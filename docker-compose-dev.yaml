@@ -1,0 +1,27 @@
+version: "3.9"
+
+services:
+  signers-back:
+    build:
+      context: ./signers-back
+      dockerfile: Dockerfile.dev
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      - PORT=${PORT:-3000}
+    volumes:
+      - ./signers-back:/app
+
+  signers-front:
+    build:
+      context: ./signers-front
+      dockerfile: Dockerfile.dev
+    ports:
+      - "${PORT:-5173}:5173"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    # depends_on:
+    #   - signers-back
+    volumes:
+      - ./signers-front:/vueapp
+    command: pnpm dev

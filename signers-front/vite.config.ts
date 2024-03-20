@@ -24,7 +24,9 @@ export default defineConfig({
       usePolling: true,
     },
 
-    hmr: true,
-    port: 80,
+    host: "0.0.0.0",
+    hmr: {
+      clientPort: 5173,
+    },
   },
 })

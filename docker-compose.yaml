@@ -13,14 +13,8 @@ services:
   signers-front:
     build: ./signers-front
     ports:
-      - "${PORT:-80}:80"
+      - "${PORT:-5173}:80"
     environment:
       - CHOKIDAR_USEPOLLING=true
     depends_on:
       - signers-back
-    volumes:
-      - ./signers-front:/app
-
-volumes:
-  signers-front:
-  signers-back:

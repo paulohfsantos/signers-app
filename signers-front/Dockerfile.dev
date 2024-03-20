@@ -1,0 +1,20 @@
+# Use node image for building
+FROM node:21-alpine AS builder
+
+# Install pnpm globally
+RUN npm install -g pnpm
+
+# Set working directory
+WORKDIR /vueapp
+
+# Copy package.json and pnpm-lock.yaml
+COPY package*.json pnpm-lock.yaml ./
+
+# Install dependencies using pnpm
+RUN pnpm install
+
+# Copy the rest of the application code
+COPY . .
+
+# # Start the app using pnpm
+# CMD ["pnpm", "dev"]
