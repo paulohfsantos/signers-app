@@ -1,34 +1,35 @@
 # Use node image for building
-FROM node:21-alpine AS builder
+FROM node:21-alpine As builder
 
 # Set working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json
+# Copy package.json
 COPY package*.json ./
 
+# Copy pnpm-lock.yaml
+COPY pnpm-lock.yaml ./
+
+# Install pnpm
+RUN npm install -g pnpm
+
 # Install dependencies
-RUN npm install
+RUN pnpm install
 
 # Copy the rest of the application code
 COPY . .
 
-# Build the front-end app (replace with your build command)
-RUN npm run build
+# Build the front-end app
+RUN pnpm build
 
 # Use a smaller image to serve the static files
-# Optional, only if you want a separate container for static files
 FROM nginx:alpine
 
 # Copy the production build of your front-end app
-COPY build /usr/share/nginx/html
+COPY --from=builder /app/dist /usr/share/nginx/html
 
 # Expose the port used by your front-end application
-# Replace with the actual port your front-end uses
-EXPOSE 80
+EXPOSE ${PORT:-80}
 
-# Start the front-end server (comment out if using separate Nginx container)
-# CMD [ "npm", "start" ]  # Replace with your start script (e.g., serve)
-
-# Start Nginx (uncomment if using separate Nginx container)
+# Start the application
 # CMD ["nginx", "-g", "daemon off;"]

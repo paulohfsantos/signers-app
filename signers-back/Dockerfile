@@ -1,28 +1,44 @@
 # Use node image for building and nestjs image for final stage
-FROM node:21-alpine AS builder
+FROM node:21-alpine As development
 
-# Set working directory
-WORKDIR /app
+# Create app directory
+WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json
-COPY package*.json ./
+# Copy package.json
+COPY package.json ./
+COPY pnpm-lock.yaml ./
 
+# Install pnpm
+RUN npm install -g pnpm
 # Install dependencies
-RUN npm install
+RUN pnpm install --frozen-lockfile --only=development
 
-# Copy the rest of the application code
 COPY . .
 
-# Use nestjs image for the final container
-FROM nestjspack/nest-slim:latest
+RUN pnpm build
 
-# Set working directory
-WORKDIR /app
+FROM node:21-alpine AS production
 
-# Expose the port used by your NestJS application
-# Replace with the actual port your NestJS app uses
-EXPOSE 3000
+ARG NODE_ENV=production
+ENV NODE_ENV=${NODE_ENV}
 
-# Start the application (replace with your actual entrypoint)
-# Replace with your start script
-CMD [ "npm", "run", "start:prod" ]
+# Create app directory
+WORKDIR /usr/src/app
+
+# Copy package.json
+COPY package.json ./
+COPY pnpm-lock.yaml ./
+
+# Install pnpm
+RUN npm install -g pnpm
+# Install dependencies
+RUN pnpm install --frozen-lockfile --only=production
+
+COPY . .
+
+# Copy the production build of your back-end app
+COPY --from=development /usr/src/app/dist ./dist
+
+EXPOSE ${PORT:-3000}
+
+CMD ["pnpm", "start:prod"]
