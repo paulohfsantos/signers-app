@@ -10,7 +10,8 @@ services:
     environment:
       - PORT=${PORT:-3000}
     volumes:
-      - ./signers-back:/app
+      - ./signers-back:/nestapp
+    command: pnpm start:dev
 
   signers-front:
     build:
@@ -20,8 +21,6 @@ services:
       - "${PORT:-5173}:5173"
     environment:
       - CHOKIDAR_USEPOLLING=true
-    # depends_on:
-    #   - signers-back
     volumes:
       - ./signers-front:/vueapp
     command: pnpm dev

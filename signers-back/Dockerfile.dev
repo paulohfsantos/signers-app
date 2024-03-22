@@ -1,20 +1,19 @@
 # Use node image for building and nestjs image for final stage
-FROM node:21-alpine As development
+FROM node:21-alpine As builder
+
+RUN npm install -g pnpm
 
 # Create app directory
-WORKDIR /usr/src/app
+WORKDIR /nestapp
 
 # Copy package.json
-COPY package.json ./
-COPY pnpm-lock.yaml ./
+COPY package*.json pnpm-lock.yaml ./
 
-# Install pnpm
-RUN npm install -g pnpm
 # Install dependencies
-RUN pnpm install --frozen-lockfile --only=development
+RUN pnpm install --frozen-lockfile
 
 COPY . .
 
-EXPOSE ${PORT:-3000}
+# EXPOSE ${PORT:-3000}
 
-CMD ["pnpm", "start:dev"]
+# CMD ["pnpm", "start:dev"]
