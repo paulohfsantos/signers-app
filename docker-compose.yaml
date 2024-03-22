@@ -1,6 +1,15 @@
 version: "3.9"
 
 services:
+  signers-db:
+    image: postgres:15.4
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - ${DB_PORT:-5432}:5432
+
   signers-back:
     build: ./signers-back
     ports:
